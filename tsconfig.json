@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "module": "ESNext",          // ← Enables import/export
+    "moduleResolution": "Bundler", // ← To avoid .js/.ts suffix errors
+    "target": "ES2020",
+    "strict": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+    "noEmit": true               // Optional: since you're not building JS
+  },
+  "include": ["src"]
+}
