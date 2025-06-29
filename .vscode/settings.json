@@ -1,0 +1,38 @@
+{
+  "javascript.updateImportsOnFileMove.enabled": "always",
+  "typescript.updateImportsOnFileMove.enabled": "always",
+
+  "terminal.integrated.scrollback": 10000,
+
+  "editor.tabSize": 4,
+  "editor.wordWrap": "on", // Wraps long lines so you don't have to scroll horizontally
+  "editor.rulers": [80, 120], // Shows vertical guide lines at 80 and 120 characters
+  "editor.bracketPairColorization.enabled": true, // Colors matching brackets for easier readability
+  "editor.guides.bracketPairs": "active", // Highlights the current bracket pair
+  "editor.quickSuggestions": {
+    // Controls when suggestions appear
+    "other": true,
+    "comments": false,
+    "strings": true
+  },
+  "editor.stickyScroll.enabled": true,
+
+  "search.exclude": {
+    // Excludes these folders from search results
+    "**/node_modules": true,
+    "**/dist": true,
+    "**/coverage": true
+  },
+
+  "javascript.suggest.autoImports": true, // Shows import suggestions as you type
+  "typescript.suggest.autoImports": true, // Same for TypeScript files
+  "typescript.preferences.importModuleSpecifier": "relative", // Uses relative paths for imports
+  "typescript.inlayHints.parameterNames.enabled": "all", // Shows parameter names inline when calling functions
+
+  "git.enableSmartCommit": true, // Commits all changes when no staged changes
+  "git.autofetch": true, // Automatically fetches changes from remote
+  "diffEditor.ignoreTrimWhitespace": false, // Shows whitespace changes in diff view
+
+  "debug.inlineValues": "on", // Shows variable values inline while debugging
+  "debug.toolBarLocation": "docked" // Keeps debug controls visible as you code
+}
