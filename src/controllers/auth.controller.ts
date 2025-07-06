@@ -1,11 +1,11 @@
 import { Request, Response } from "express";
 import bcrypt from "bcrypt";
-import { LoginSchema, RefreshTokenSchema, RegisterSchema } from "./schemas";
+import { LoginSchema, RefreshTokenSchema, RegisterSchema } from "../schemas/auth.schema";
 import { z, email } from 'zod/v4';
 import jwt from "jsonwebtoken";
 import { randomBytes } from "crypto";
 
-const accessTokenExpirationTime = "10s";
+const accessTokenExpirationTime = "15m";
 
 const users = new Map<string, string>();
 

@@ -21,8 +21,9 @@ export function authenticateJWT(
 
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET!);
+        console.log('[AuthMiddleware] JWT successfully verified:', decoded);
         req.user = decoded;
-        next();
+        next();        
     } catch (error) {
         console.error('[AuthMiddleware] JWT Error:', error);
         res.status(401).json({ message: "Invalid or expired token" });
