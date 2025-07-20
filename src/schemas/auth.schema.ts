@@ -1,4 +1,5 @@
 import { email, z } from 'zod/v4'
+import { RolesEnum } from '../models/user.model';
 
 // Schemas
 export const PasswordSchema = z
@@ -25,7 +26,10 @@ export const RegisterSchema = z.object({
 
 export const LoginSchema = z.object({
     email: z.email(),
-    password: z.string().min(1, "Password is required")
+    password: z.string().min(1, "Password is required"),
+    role: z.enum(RolesEnum, {
+        message: "Role must be either 'user' or 'admin'"
+    })
 });
 
 export const RefreshTokenSchema = z.object({

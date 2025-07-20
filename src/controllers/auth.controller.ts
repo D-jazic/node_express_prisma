@@ -1,13 +1,23 @@
-import { Request, Response } from "express";
 import bcrypt from "bcrypt";
-import { LoginSchema, RefreshTokenSchema, RegisterSchema } from "../schemas/auth.schema";
-import { z, email } from 'zod/v4';
-import jwt from "jsonwebtoken";
 import { randomBytes } from "crypto";
+import { NextFunction, Request, Response } from "express";
+import jwt from "jsonwebtoken";
+import { z } from 'zod/v4';
+import { RolesEnum, User } from "../models/user.model";
+import { LoginSchema, RefreshTokenSchema, RegisterSchema } from "../schemas/auth.schema";
+import { ApiError } from "../middlewares/errorHandler.middleware";
 
 const accessTokenExpirationTime = "15m";
 
-const users = new Map<string, string>();
+export const users = new Map<string, User>();
+
+(async () => {
+    users.set('admin@example.com', {
+        email: 'admin@example.com',
+        password: await bcrypt.hash('Admin123!', 10),
+        role: RolesEnum.ADMIN,
+    });
+})();
 
 export interface RefreshTokenData {
     email: string;
@@ -16,7 +26,7 @@ export interface RefreshTokenData {
 
 const refreshTokens = new Map<string, RefreshTokenData>();
 
-export async function registerUser(req: Request, res: Response) {
+export async function registerUser(req: Request, res: Response, next: NextFunction) {
     try {
         const result = RegisterSchema.safeParse(req.body);
 
@@ -32,12 +42,14 @@ export async function registerUser(req: Request, res: Response) {
         const { email, password } = result.data;
 
         if (users.has(email)) {
-            res.status(409).json({ error: "User already exists" });
-            return;
+            throw new ApiError('User already exists', 409);
         }
 
-        const hashedPassword = await bcrypt.hash(password, 10);
-        users.set(email, hashedPassword);
+        users.set(email, {
+            email,
+            password: await bcrypt.hash(password, 10),
+            role: RolesEnum.USER
+        });
 
         console.log("Received registration request:", { email, password });
 
@@ -47,13 +59,11 @@ export async function registerUser(req: Request, res: Response) {
         });
         return;
     } catch (error) {
-        console.error(`[Controller] Error during user registration`, error)
-        res.status(500).json({ error: "Internal Server Error" });
-        return;
+        next(error);
     }
 }
 
-export async function loginUser(req: Request, res: Response) {
+export async function loginUser(req: Request, res: Response, next: NextFunction) {
     try {
         const result = LoginSchema.safeParse(req.body);
         if (!result.success) {
@@ -65,22 +75,20 @@ export async function loginUser(req: Request, res: Response) {
             return;
         }
 
-        const { email, password } = result.data;
+        const { email, password, role } = result.data;
         const hashed = users.get(email);
 
         if (!hashed) {
-            res.status(401).json({ error: "Invalid email or password" });
-            return;
+            throw new ApiError('Invalid email or password', 401);
         }
 
-        const isValid = await bcrypt.compare(password, hashed);
+        const isValid = await bcrypt.compare(password, hashed.password);
 
         if (!isValid) {
-            res.status(401).json({ error: "Invalid email or password" });
-            return;
+            throw new ApiError('Invalid email or password', 401);
         }
 
-        const accessToken = jwt.sign({ email }, process.env.JWT_SECRET!, { expiresIn: accessTokenExpirationTime });
+        const accessToken = jwt.sign({ email, role }, process.env.JWT_SECRET!, { expiresIn: accessTokenExpirationTime });
 
         const refreshToken = randomBytes(32).toString('hex');
         const expiresAt = Date.now() + 3 * 24 * 60 * 60 * 1000;
@@ -95,9 +103,7 @@ export async function loginUser(req: Request, res: Response) {
 
 
     } catch (error) {
-        console.error(`[Controller] Login error`, error);
-        res.status(500).json({ error: "Internal Server Error" });
-        return;
+        next(error);
     }
 }
 
@@ -116,20 +122,19 @@ export async function refreshTokenHandler(req: Request, res: Response) {
     const { refreshToken } = req.body;
 
     if (!refreshToken || !refreshTokens.has(refreshToken)) {
-        res.status(401).json({ error: "Invalid or missing refresh token" });
-        return;
+        throw new ApiError('Invalid or missing refresh token', 401);
     }
 
     const tokenData = refreshTokens.get(refreshToken)!;
 
     if (Date.now() > tokenData.expiresAt) {
         refreshTokens.delete(refreshToken);
-        res.status(401).json({ error: "Refresh token expired" });
-        return;
+        throw new ApiError('Refresh token expired', 401);
     }
 
     refreshTokens.delete(refreshToken);
 
+    //TODO: duplicated here and in loginUser, create a utility function
     const newRefreshToken = randomBytes(32).toString('hex');
     const expiresAt = Date.now() + 3 * 24 * 60 * 60 * 1000;
 

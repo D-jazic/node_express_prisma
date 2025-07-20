@@ -34,5 +34,7 @@
   "diffEditor.ignoreTrimWhitespace": false, // Shows whitespace changes in diff view
 
   "debug.inlineValues": "on", // Shows variable values inline while debugging
-  "debug.toolBarLocation": "docked" // Keeps debug controls visible as you code
+  "debug.toolBarLocation": "docked", // Keeps debug controls visible as you code
+
+  "jest.runMode": "on-demand"
 }

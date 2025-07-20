@@ -1,12 +1,13 @@
 import jwt from "jsonwebtoken";
 import { NextFunction, Request, Response } from "express";
+import { User } from "../models/user.model";
 
-export interface AuthRequest extends Request {
-    user?: unknown;
+export interface AuthenticatedRequest extends Request {
+    user?: User;
 }
 
 export function authenticateJWT(
-    req: AuthRequest,
+    req: AuthenticatedRequest,
     res: Response,
     next: NextFunction
 ) {
@@ -22,7 +23,7 @@ export function authenticateJWT(
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET!);
         console.log('[AuthMiddleware] JWT successfully verified:', decoded);
-        req.user = decoded;
+        req.user = decoded as User; // Cast to User type
         next();        
     } catch (error) {
         console.error('[AuthMiddleware] JWT Error:', error);

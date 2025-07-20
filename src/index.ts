@@ -4,19 +4,19 @@ dotenv.config({ path: '.env.local' });
 import express from 'express';
 import authRoutes from './routes/auth.routes.js';
 import rootRoutes from './routes/root.routes.js';
+import userRoutes from './routes/user.routes.js';
+import meRoutes from './routes/me.routes.js';
+import { errorHandler } from './middlewares/errorHandler.middleware.js';
 
 const app = express();
 
 app.use(express.json());
 app.use('/', rootRoutes);
 app.use('/api', authRoutes);
+app.use('/api/me', meRoutes);
+app.use('/api/users', userRoutes);
 
-// Moved to server.ts because of jest imports app and arguing that some async function
-// were not properly stopped after tests. It because after import of app server is started
-
-//   const PORT = process.env.PORT || 3000;
-//   app.listen(PORT, () => {
-//     console.log(`Server running on port ${PORT}`);
-//   });
+// Always last
+app.use(errorHandler);
 
 export default app;
