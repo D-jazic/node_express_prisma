@@ -3,16 +3,16 @@ import { randomBytes } from "crypto";
 import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import { z } from 'zod/v4';
+import { ApiError } from "../middlewares/errorHandler.middleware";
 import { RolesEnum, User } from "../models/user.model";
 import { LoginSchema, RefreshTokenSchema, RegisterSchema } from "../schemas/auth.schema";
-import { ApiError } from "../middlewares/errorHandler.middleware";
+import { userRepository } from "../repositories/user.repository";
 
 const accessTokenExpirationTime = "15m";
 
-export const users = new Map<string, User>();
 
 (async () => {
-    users.set('admin@example.com', {
+    userRepository.createUser({
         email: 'admin@example.com',
         password: await bcrypt.hash('Admin123!', 10),
         role: RolesEnum.ADMIN,
@@ -41,11 +41,7 @@ export async function registerUser(req: Request, res: Response, next: NextFuncti
 
         const { email, password } = result.data;
 
-        if (users.has(email)) {
-            throw new ApiError('User already exists', 409);
-        }
-
-        users.set(email, {
+        const createdUser = await userRepository.createUser({
             email,
             password: await bcrypt.hash(password, 10),
             role: RolesEnum.USER
@@ -55,7 +51,7 @@ export async function registerUser(req: Request, res: Response, next: NextFuncti
 
         res.status(201).json({
             message: "User registered successfully",
-            user: { email }
+            user: { email: createdUser.email }
         });
         return;
     } catch (error) {
@@ -76,7 +72,7 @@ export async function loginUser(req: Request, res: Response, next: NextFunction)
         }
 
         const { email, password, role } = result.data;
-        const hashed = users.get(email);
+        const hashed = await userRepository.getUserByEmail(email);
 
         if (!hashed) {
             throw new ApiError('Invalid email or password', 401);

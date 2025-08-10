@@ -58,3 +58,4 @@ pids
 
 # Optional stylelint cache
 .stylelintcache
+/src/generated/prisma

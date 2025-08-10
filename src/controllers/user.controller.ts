@@ -1,8 +1,10 @@
 import { Response } from "express";
 import { AuthenticatedRequest } from "../middlewares/auth.middleware";
-import { users } from "./auth.controller";
-import { RolesEnum } from "../models/user.model";
 import { ApiError } from "../middlewares/errorHandler.middleware";
+import { RolesEnum } from "../models/user.model";
+import { userRepository } from '../repositories/user.repository';
+
+
 
 /**
  * // Only admin hits this (protected in route)
@@ -10,16 +12,24 @@ import { ApiError } from "../middlewares/errorHandler.middleware";
  * @param res 
  * @returns 
  */
-export function getUsers(req: AuthenticatedRequest, res: Response) {
+export async function getUsers(req: AuthenticatedRequest, res: Response) {
+    const users = await userRepository.getAllUsers();
+
     res.json({
-        users: Array.from(users.values())
+        users
     });
     return;
 }
 
-export function getMe(req: AuthenticatedRequest, res: Response) {
+export async function getMe(req: AuthenticatedRequest, res: Response) {
     const email = req.user?.email;
-    const user = users.get(email!);
+
+    if (!email) {
+        throw new ApiError('Email not found in request', 400);
+    }
+
+    const user = await userRepository.getUserByEmail(email);
+
     if (!user) {
         throw new ApiError('User not found', 404);
     }
@@ -38,7 +48,7 @@ export function getUserByEmail(req: AuthenticatedRequest, res: Response) {
         throw new ApiError('Forbidden', 403);
     }
 
-    const foundUser = users.get(email);
+    const foundUser = userRepository.getUserByEmail(email);
 
     if (!foundUser) {
         throw new ApiError('User not found', 404);

@@ -29,6 +29,6 @@ describe('Auth API', () => {
             .send({ email: 'test2@example.com', password: 'Password123!' });
         expect(res.statusCode).toBe(409);
         expect(res.body).toHaveProperty('error');
-        expect(res.body.error).toBe('User already exists');
+        expect(res.body.error).toBe('User with this email already exists');
     });
 });

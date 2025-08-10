@@ -15,9 +15,11 @@ export function errorHandler(
     // Log error for debugging (expand in prod)
     console.error('[ErrorHandler]', err);
     if (err instanceof ApiError) {
-        return res.status(err.statusCode).json({ error: err.message });
+        res.status(err.statusCode).json({ error: err.message });
+        return;
     }
 
     // Handle other errors
-    return res.status(500).json({ error: 'Internal Server Error' });
+    res.status(500).json({ error: 'Internal Server Error' });
+    return;
 }
