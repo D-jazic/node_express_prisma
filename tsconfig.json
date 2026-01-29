@@ -2,7 +2,7 @@
   "compilerOptions": {
     "module": "ES2022",          // ← Enables import/export
     "moduleResolution": "Bundler", // ← To avoid .js/.ts suffix errors
-    "target": "ES2022",
+    "target": "ES2023",
     "strict": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
