@@ -12,11 +12,14 @@ const accessTokenExpirationTime = "15m";
 
 
 (async () => {
-    userRepository.createUser({
-        email: 'admin@example.com',
-        password: await bcrypt.hash('Admin123!', 10),
-        role: RolesEnum.ADMIN,
-    });
+
+    if (!await userRepository.getUserByEmail('admin@example.com')) {
+        userRepository.createUser({
+            email: 'admin@example.com',
+            password: await bcrypt.hash('Admin123!', 10),
+            role: RolesEnum.ADMIN,
+        });
+    }
 })();
 
 export interface RefreshTokenData {
