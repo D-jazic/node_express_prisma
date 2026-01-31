@@ -13,10 +13,10 @@ const accessTokenExpirationTime = "15m";
 
 (async () => {
 
-    if (!await userRepository.getUserByEmail('admin@example.com')) {
+    if (!await userRepository.getUserByEmail(process.env.ADMIN_EMAIL!)) {
         userRepository.createUser({
-            email: 'admin@example.com',
-            password: await bcrypt.hash('Admin123!', 10),
+            email: process.env.ADMIN_EMAIL!,
+            password: await bcrypt.hash(process.env.ADMIN_PASSWORD!, 10),
             role: RolesEnum.ADMIN,
         });
     }
