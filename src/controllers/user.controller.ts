@@ -1,8 +1,10 @@
-import { Response } from "express";
+import { Response, Request, NextFunction } from "express";
 import { AuthenticatedRequest } from "../middlewares/auth.middleware";
 import { ApiError } from "../middlewares/errorHandler.middleware";
 import { RolesEnum } from "../models/user.model";
 import { userRepository } from '../repositories/user.repository';
+import z from "zod/v4";
+import { DeleteUserByEmailParamsSchema } from "../schemas/user.schema";
 
 
 
@@ -41,14 +43,15 @@ export async function getMe(req: AuthenticatedRequest, res: Response) {
     return;
 }
 
-export function getUserByEmail(req: AuthenticatedRequest, res: Response) {
+export async function getUserByEmail(req: AuthenticatedRequest, res: Response) {
     const { email } = req.body;
 
+    // TODO: for input use Zod, for business logic custom errors
     if (req.user?.role !== RolesEnum.ADMIN && email !== req.user?.email) {
         throw new ApiError('Forbidden', 403);
     }
 
-    const foundUser = userRepository.getUserByEmail(email);
+    const foundUser = await userRepository.getUserByEmail(email);
 
     if (!foundUser) {
         throw new ApiError('User not found', 404);
@@ -56,4 +59,29 @@ export function getUserByEmail(req: AuthenticatedRequest, res: Response) {
 
     res.json({ user: foundUser });
     return;
+}
+
+// Better to use ID
+export async function deleteUserByEmail(req: Request, res: Response, next: NextFunction) {
+    try {
+        const result = DeleteUserByEmailParamsSchema.safeParse(req.params);
+
+        if (!result.success) {
+            res.status(422)
+                .json({
+                    error: 'Invalid request.',
+                    details: z.treeifyError(result.error)
+                })
+            return;
+        }
+
+        const deletedUser = await userRepository.deleteUserByEmail(result.data.email);
+
+        res.json({
+            message: `User with email ${deletedUser.email} deleted successfully`
+        });
+        return;
+    } catch (error) {
+        next(error);
+    }
 }

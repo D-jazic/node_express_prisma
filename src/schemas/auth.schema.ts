@@ -19,12 +19,12 @@ export const PasswordSchema = z
         message: "Password must contain at least one special character",
     })
 
-export const RegisterSchema = z.object({
+export const RegisterSchema = z.strictObject({
     email: z.email(),
     password: PasswordSchema
 })
 
-export const LoginSchema = z.object({
+export const LoginSchema = z.strictObject({
     email: z.email(),
     password: z.string().min(1, "Password is required"),
     role: z.enum(RolesEnum, {
@@ -32,7 +32,7 @@ export const LoginSchema = z.object({
     })
 });
 
-export const RefreshTokenSchema = z.object({
+export const RefreshTokenSchema = z.strictObject({
     refreshToken: z.string().min(1, "Refresh token is required")
 });
 

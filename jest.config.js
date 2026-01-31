@@ -7,7 +7,6 @@ export default {
   testEnvironment: "node",
   transform: {
     ...tsJestTransformCfg,
-    
   },
   extensionsToTreatAsEsm: ['.ts'],
   moduleNameMapper: {
