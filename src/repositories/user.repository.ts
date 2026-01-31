@@ -36,6 +36,18 @@ export class UserRepository {
     async getAllUsers() {
         return prisma.user.findMany();
     }
+
+    async deleteUserById(id: number) {
+        return prisma.user.delete({
+            where: { id },
+        });
+    }
+
+    async deleteUserByEmail(email: string) {
+        return prisma.user.delete({
+            where: { email },
+        })
+    }
 }
 
 export const userRepository = new UserRepository();
