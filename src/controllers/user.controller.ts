@@ -1,10 +1,10 @@
 import { Response, Request, NextFunction } from "express";
-import { AuthenticatedRequest } from "../middlewares/auth.middleware";
-import { ApiError } from "../middlewares/errorHandler.middleware";
-import { RolesEnum } from "../models/user.model";
-import { userRepository } from '../repositories/user.repository';
+import { AuthenticatedRequest } from "../middlewares/auth.middleware.js";
+import { ApiError } from "../middlewares/errorHandler.middleware.js";
+import { RolesEnum } from "../models/user.model.js";
+import { userRepository } from '../repositories/user.repository.js';
 import z from "zod/v4";
-import { DeleteUserByEmailParamsSchema } from "../schemas/user.schema";
+import { DeleteUserByEmailParamsSchema } from "../schemas/user.schema.js";
 
 
 

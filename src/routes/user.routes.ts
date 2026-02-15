@@ -1,8 +1,8 @@
 import { Router } from "express";
-import { deleteUserByEmail, getUsers } from "../controllers/user.controller";
-import { authenticateJWT } from "../middlewares/auth.middleware";
-import { authorizeRole } from "../middlewares/authorizeRole.middleware";
-import { RolesEnum } from "../models/user.model";
+import { deleteUserByEmail, getUsers } from "../controllers/user.controller.js";
+import { authenticateJWT } from "../middlewares/auth.middleware.js";
+import { authorizeRole } from "../middlewares/authorizeRole.middleware.js";
+import { RolesEnum } from "../models/user.model.js";
 
 const router = Router();
 

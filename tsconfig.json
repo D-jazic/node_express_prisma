@@ -1,13 +1,14 @@
 {
   "compilerOptions": {
-    "module": "es2022",          // ← Enables import/export
-    "moduleResolution": "Bundler", // ← To avoid .js/.ts suffix errors
-    "target": "es2022",
+    "target": "ES2022",
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
     "strict": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
-    "noEmit": true               // Optional: since you're not building JS
+    "noEmit": true,
+    "isolatedModules": true
   },
-  "include": ["src"]
+  "include": ["src", "tests"]
 }

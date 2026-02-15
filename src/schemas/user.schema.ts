@@ -1,5 +1,5 @@
 import { z, email } from 'zod/v4';
-import { RolesEnum } from '../models/user.model';
+import { RolesEnum } from '../models/user.model.js';
 
 // Primitives (reused across endpoints)
 const UserEmailParamSearch = z.strictObject({

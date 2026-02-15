@@ -1,6 +1,6 @@
 import { NextFunction, Response } from "express";
-import { RolesEnum } from "../models/user.model";
-import { AuthenticatedRequest } from "./auth.middleware";
+import { RolesEnum } from "../models/user.model.js";
+import { AuthenticatedRequest } from "./auth.middleware.js";
 
 export function authorizeRole(role: RolesEnum) {
     return (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
