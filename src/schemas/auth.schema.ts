@@ -1,5 +1,5 @@
 import { email, z } from 'zod/v4'
-import { RolesEnum } from '../models/user.model';
+import { RolesEnum } from '../models/user.model.js';
 
 // Schemas
 export const PasswordSchema = z
@@ -20,7 +20,7 @@ export const PasswordSchema = z
     })
 
 export const RegisterSchema = z.strictObject({
-    email: z.email(),
+    email: z.email("Email validation not passed"),
     password: PasswordSchema
 })
 

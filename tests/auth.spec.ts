@@ -1,15 +1,21 @@
 import request from 'supertest';
-import app from '../src/index';
-import { RolesEnum } from '../src/models/user.model';
+import app from '../src/index.js';
+import { RolesEnum } from '../src/models/user.model.js';
+import { prisma } from '../src/db/prisma.js';
+import { faker } from '@faker-js/faker';
+
+afterAll(async () => {
+    await prisma.$disconnect();
+});
 
 describe('Auth API', () => {
     it('registers a user', async () => {
-        const email = "test123@email.com";
+        const email = faker.internet.email({ provider: "gmail.com" }).toLowerCase();
         const password = "Test1234!"
 
         const registerRes = await request(app)
             .post('/api/register')
-            .send({ email: email, password });
+            .send({ email, password });
         const loginRes = await request(app)
             .post('/api/login')
             .send({ email, password, role: RolesEnum.USER });
@@ -26,7 +32,7 @@ describe('Auth API', () => {
         );
 
         const deletedUser = await request(app)
-            .delete(`/api/users/${encodeURIComponent(email)}`)
+            .delete(`/api/users/${encodeURIComponent(registerRes.body.user.id)}`)
             .set('Authorization', `Bearer ${token}`)
             .send();
 
@@ -34,10 +40,10 @@ describe('Auth API', () => {
     });
 
     it('does not register duplicate email', async () => {
-        const email = "test1234wgr@email.com";
+        const email = faker.internet.email({ provider: "gmail.com" }).toLowerCase();
         const password = "Test1234!"
 
-        await request(app)
+        const registerSuccessRes = await request(app)
             .post('/api/register')
             .send({ email, password });
 
@@ -56,7 +62,7 @@ describe('Auth API', () => {
         const token = loginRes.body?.token;
 
         const deletedUser = await request(app)
-            .delete(`/api/users/${encodeURIComponent(email)}`)
+            .delete(`/api/users/${encodeURIComponent(registerSuccessRes.body.user.id)}`)
             .set('Authorization', `Bearer ${token}`)
             .send();
 

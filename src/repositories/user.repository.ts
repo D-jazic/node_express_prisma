@@ -1,7 +1,7 @@
-import { prisma } from "../db/prisma";
-import { Prisma } from "../generated/prisma";
-import { ApiError } from "../middlewares/errorHandler.middleware";
-import { User } from "../models/user.model";
+import { prisma } from "../db/prisma.js";
+import { Prisma } from "../generated/prisma/client.js";
+import { ApiError } from "../middlewares/errorHandler.middleware.js";
+import { User } from "../models/user.model.js";
 
 export class UserRepository {
 
@@ -41,12 +41,6 @@ export class UserRepository {
         return prisma.user.delete({
             where: { id },
         });
-    }
-
-    async deleteUserByEmail(email: string) {
-        return prisma.user.delete({
-            where: { email },
-        })
     }
 }
 

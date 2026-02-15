@@ -3,10 +3,10 @@ import { randomBytes } from "crypto";
 import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import { z } from 'zod/v4';
-import { ApiError } from "../middlewares/errorHandler.middleware";
-import { RolesEnum, User } from "../models/user.model";
-import { LoginSchema, RefreshTokenSchema, RegisterSchema } from "../schemas/auth.schema";
-import { userRepository } from "../repositories/user.repository";
+import { RolesEnum, User } from "../models/user.model.js";
+import { LoginSchema, RefreshTokenSchema, RegisterSchema } from "../schemas/auth.schema.js";
+import { userRepository } from "../repositories/user.repository.js";
+import { ApiError } from "../middlewares/errorHandler.middleware.js";
 
 const accessTokenExpirationTime = "15m";
 
@@ -50,11 +50,9 @@ export async function registerUser(req: Request, res: Response, next: NextFuncti
             role: RolesEnum.USER
         });
 
-        console.log("Received registration request:", { email, password });
-
         res.status(201).json({
             message: "User registered successfully",
-            user: { email: createdUser.email }
+            user: { id: createdUser.id, email: createdUser.email }
         });
         return;
     } catch (error) {
