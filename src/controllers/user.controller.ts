@@ -1,10 +1,10 @@
-import { Response, Request, NextFunction } from "express";
+import { NextFunction, Request, Response } from "express";
+import z from "zod/v4";
 import { AuthenticatedRequest } from "../middlewares/auth.middleware.js";
 import { ApiError } from "../middlewares/errorHandler.middleware.js";
 import { RolesEnum } from "../models/user.model.js";
 import { userRepository } from '../repositories/user.repository.js';
-import z from "zod/v4";
-import { DeleteUserByEmailParamsSchema } from "../schemas/user.schema.js";
+import { DeleteUserByIdParamSchema } from "../schemas/user.schema.js";
 
 
 
@@ -62,9 +62,9 @@ export async function getUserByEmail(req: AuthenticatedRequest, res: Response) {
 }
 
 // Better to use ID
-export async function deleteUserByEmail(req: Request, res: Response, next: NextFunction) {
+export async function deleteUserById(req: Request, res: Response, next: NextFunction) {
     try {
-        const result = DeleteUserByEmailParamsSchema.safeParse(req.params);
+        const result = DeleteUserByIdParamSchema.safeParse(req.params);
 
         if (!result.success) {
             res.status(422)
@@ -75,10 +75,10 @@ export async function deleteUserByEmail(req: Request, res: Response, next: NextF
             return;
         }
 
-        const deletedUser = await userRepository.deleteUserByEmail(result.data.email);
+        const deletedUser = await userRepository.deleteUserById(result.data.id);
 
         res.json({
-            message: `User with email ${deletedUser.email} deleted successfully`
+            message: `User with id ${deletedUser.id} deleted successfully`
         });
         return;
     } catch (error) {

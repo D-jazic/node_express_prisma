@@ -32,7 +32,7 @@ describe('Auth API', () => {
         );
 
         const deletedUser = await request(app)
-            .delete(`/api/users/${encodeURIComponent(email)}`)
+            .delete(`/api/users/${encodeURIComponent(registerRes.body.user.id)}`)
             .set('Authorization', `Bearer ${token}`)
             .send();
 
@@ -43,7 +43,7 @@ describe('Auth API', () => {
         const email = faker.internet.email({ provider: "gmail.com" }).toLowerCase();
         const password = "Test1234!"
 
-        await request(app)
+        const registerSuccessRes = await request(app)
             .post('/api/register')
             .send({ email, password });
 
@@ -62,7 +62,7 @@ describe('Auth API', () => {
         const token = loginRes.body?.token;
 
         const deletedUser = await request(app)
-            .delete(`/api/users/${encodeURIComponent(email)}`)
+            .delete(`/api/users/${encodeURIComponent(registerSuccessRes.body.user.id)}`)
             .set('Authorization', `Bearer ${token}`)
             .send();
 

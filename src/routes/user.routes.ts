@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { deleteUserByEmail, getUsers } from "../controllers/user.controller.js";
+import { deleteUserById, getUsers } from "../controllers/user.controller.js";
 import { authenticateJWT } from "../middlewares/auth.middleware.js";
 import { authorizeRole } from "../middlewares/authorizeRole.middleware.js";
 import { RolesEnum } from "../models/user.model.js";
@@ -12,8 +12,8 @@ router.get('/',
     authorizeRole(RolesEnum.ADMIN),
     getUsers
 );
-router.delete('/:email',
-    deleteUserByEmail
+router.delete('/:id',
+    deleteUserById
 );
 
 export default router;
